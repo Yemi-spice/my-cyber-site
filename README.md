@@ -1,1 +1,277 @@
-# my-cyber-site
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus AI | Premium Trading</title>
+    <style>
+        :root {
+            --bg-dark: #0b0e11;
+            --card-bg: #151a21;
+            --text-main: #e0e6ed;
+            --text-muted: #788293;
+            --accent-green: #00c853;
+            --accent-blue: #2962ff;
+            --border: #2a3038;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px; /* Mobile-first app feel */
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        /* Header */
+        .header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--accent-blue);
+            letter-spacing: 1px;
+        }
+
+        .status {
+            font-size: 0.8rem;
+            color: var(--accent-green);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Balance Card */
+        .balance-card {
+            padding: 30px 20px;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(41, 98, 255, 0.1) 0%, rgba(21, 26, 33, 0) 100%);
+        }
+
+        .label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .amount {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin: 10px 0;
+            color: #fff;
+        }
+
+        .profit {
+            color: var(--accent-green);
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: inline-block;
+            background: rgba(0, 200, 83, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        /* Chart Area */
+        .chart-container {
+            padding: 20px;
+            height: 200px;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Action Buttons */
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .btn {
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-deposit {
+            background-color: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-withdraw {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        /* Asset List */
+        .assets {
+            padding: 0 20px 20px 20px;
+        }
+
+        .asset-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .asset-name {
+            color: var(--text-main);
+        }
+
+        .asset-val {
+            color: var(--text-muted);
+        }
+
+        .positive {
+            color: var(--accent-green);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="logo">NEXUS AI</div>
+        <div class="status"><div class="dot"></div> Live Connection</div>
+    </div>
+
+    <div class="balance-card">
+        <div class="label">Total Portfolio Value</div>
+        <div class="amount" id="totalBalance">$4,285,900.00</div>
+        <div class="profit">▲ +18.4% This Month</div>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="growthChart"></canvas>
+    </div>
+
+    <div class="assets">
+        <div class="asset-item">
+            <span class="asset-name">AI Hedge Fund Alpha</span>
+            <span class="asset-val positive">+$124,500.00</span>
+        </div>
+        <div class="asset-item">
+            <span class="asset-name">Crypto Arbitrage Bot</span>
+            <span class="asset-val positive">+$45,200.00</span>
+        </div>
+        <div class="asset-item">
+            <span class="asset-name">Quantum Algo Strategy</span>
+            <span class="asset-val positive">+$89,100.00</span>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-deposit">Deposit Funds</button>
+        <button class="btn btn-withdraw">Withdraw</button>
+    </div>
+</div>
+
+<script>
+    // Simple script to draw a "growing" chart
+    const canvas = document.getElementById('growthChart');
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas size
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    function drawChart() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Gradient fill
+        let gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, 'rgba(0, 200, 83, 0.2)');
+        gradient.addColorStop(1, 'rgba(0, 200, 83, 0)');
+
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height);
+
+        // Create a smooth upward curve
+        let points = [];
+        for (let i = 0; i <= canvas.width; i += 10) {
+            // Math.sin creates a wave, we add i * 0.5 to make it go up
+            let y = canvas.height - (Math.sin(i * 0.02) * 20 + (i / canvas.width) * canvas.height * 0.6 + 20);
+            points.push({x: i, y: y});
+            ctx.lineTo(i, y);
+        }
+
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Draw the line on top
+        ctx.beginPath();
+        ctx.strokeStyle = '#00c853';
+        ctx.lineWidth = 2;
+        for(let i=0; i<points.length; i++) {
+            if(i===0) ctx.moveTo(points[i].x, points[i].y);
+            else ctx.lineTo(points[i].x, points[i].y);
+        }
+        ctx.stroke();
+    }
+
+    drawChart();
+    
+    // Simulate live updates
+    setInterval(() => {
+        // Slightly fluctuate the balance number
+        let current = parseFloat(document.getElementById('totalBalance').innerText.replace(/[^0-9.-]+/g,""));
+        let increase = Math.random() * 50; 
+        document.getElementById('totalBalance').innerText = '$' + (current + increase).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }, 3000);
+</script>
+
+</body>
+</html>
